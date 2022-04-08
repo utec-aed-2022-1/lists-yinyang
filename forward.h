@@ -11,10 +11,19 @@ class ForwardList : public List<T> {
         int nodes;
 
     public:
-        ForwardList() : List<T>() {}
+        ForwardList() : List<T>() { // *
+            head = nullptr;
+        }
 
-        ~ForwardList(){ 
-         	// TODO            
+        ~ForwardList(){ // *
+            if(!is_empty()){
+                Node* temp = head;
+                while(temp != nullptr){
+                    temp = head->next;
+                    delete head;
+                    head = temp;
+                }
+            } 	            
         }
 
         T front(){
@@ -26,10 +35,12 @@ class ForwardList : public List<T> {
             throw ("sin definir");
         }
 
-        void push_front(T data){
+        void push_front(T data){ // *
             //throw ("sin definir");
             Node<T>* nuevo = new Node<T>(data);
             nuevo->data = data;
+            Node* temp = nuevo;
+            nuevo->next = head;
             head = nuevo;
             nodes++;
         }
@@ -51,19 +62,27 @@ class ForwardList : public List<T> {
             }
         }
 
-        T pop_front(){ //REVISAR
+        T pop_front(){ //REVISAR *
             //throw ("sin definir");
-            if (head != nullptr) {
+            if (!is_empty()) {
+                // Node<T>* temp = head;
+                // // T data;
+                // // data = temp->data;
+                // head = head->next;
+                // nodes--;
+                // delete temp;
+                // return data;
+
                 Node<T>* temp = head;
-                T data;
-                data = temp->data;
                 head = head->next;
                 nodes--;
                 delete temp;
                 return data;
+
+
             }
             else {
-                throw("Lista vacía.")
+                throw ("Lista vacía.")
             }
             
         }

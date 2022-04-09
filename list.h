@@ -9,7 +9,7 @@ class List {
     public:
         List() : head(nullptr), tail(nullptr), nodes(0) {};
         virtual ~List(){
-            // TODO            
+            // TODO           
         };
         
         //Contrato
@@ -21,7 +21,7 @@ class List {
         virtual T pop_back() = 0;
         virtual T insert(T, int) = 0;
         virtual bool remove(int) = 0;
-        virtual T& operator[](int) = 0;//debe ser declarado en cada clase hija
+        virtual T& operator[](int) = 0; //debe ser declarado en cada clase hija
         virtual bool is_empty() = 0;
         virtual int size() = 0;
         virtual void clear() = 0;

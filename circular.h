@@ -14,7 +14,7 @@ class CircularList : public List<T> {
 
         ~CircularList(){
            // TODO
-        }       
+        }
 };
 
 #endif

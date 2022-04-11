@@ -7,7 +7,7 @@
 template <typename T>
 class List {    
     public:
-        List() : head(nullptr), tail(nullptr), nodes(0) {};
+        List(){};
         virtual ~List(){
             // TODO           
         };

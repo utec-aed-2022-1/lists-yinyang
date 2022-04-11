@@ -11,13 +11,13 @@ class ForwardList : public List<T> {
         int nodes;
 
     public:
-        ForwardList() : List<T>() { // *
-            head = nullptr;
+        ForwardList() : List<T>(), nodes(0), head(nullptr) { // *
+            //head = nullptr;
         }
 
         ~ForwardList(){ // *
             if(!is_empty()){
-                Node* temp = head;
+                Node<T>* temp = head;
                 while(temp != nullptr){
                     temp = head->next;
                     delete head;
@@ -31,7 +31,7 @@ class ForwardList : public List<T> {
             if(head != nullptr)
                 return head->data;
             else
-                throw("Lista vacía.")
+                throw("Lista vacía.");
         }
 
         T back(){ //LISTO
@@ -46,14 +46,12 @@ class ForwardList : public List<T> {
                 return data;
             }
             else
-                throw("Lista vacía.")
+                throw("Lista vacía.");
         }
 
         void push_front(T data){ // *
             //throw ("sin definir");
             Node<T>* nuevo = new Node<T>(data);
-            nuevo->data = data;
-            Node* temp = nuevo;
             nuevo->next = head;
             head = nuevo;
             nodes++;
@@ -68,9 +66,9 @@ class ForwardList : public List<T> {
             else{
                 Node<T>* temp = head;
                 while(temp->next != nullptr) // Si el siguiente no apunta a nullptr
-                    temp = temp->next;           // Se pasa al siguiente elemento
+                    temp = temp->next;       // Se pasa al siguiente elemento
                 temp->next = nuevo;
-                nuevo->next = nullptr
+                nuevo->next = nullptr;
                 nodes++;
                 delete temp;
             }
@@ -79,52 +77,77 @@ class ForwardList : public List<T> {
         T pop_front(){ //REVISAR *
             //throw ("sin definir");
             if (!is_empty()) {
-                // Node<T>* temp = head;
-                // // T data;
-                // // data = temp->data;
-                // head = head->next;
-                // nodes--;
-                // delete temp;
-                // return data;
-
                 Node<T>* temp = head;
+                T data;
+                data = temp->data;
                 head = head->next;
                 nodes--;
                 delete temp;
                 return data;
 
+                // Node<T>* temp = head;
+                // head = head->next;
+                // nodes--;
+                // delete temp;
+                // return data;
+
 
             }
             else {
-                throw ("Lista vacía.")
+                throw ("Lista vacía.");
             }
             
         }
 
         T pop_back(){ //LISTO
             //throw ("sin definir");
-            if (head != nullptr){
-                Node<T>* temp = head;
-                T data;
+            // if (head != nullptr){
+            //     Node<T>* temp = head;
+            //     T data;
 
-                if (temp->next != nullptr)
-                    while(temp->next->next != nullptr)
-                        temp = temp->next;
-
-                    data = temp->next->data;
-                    delete temp->next;
-                    temp->next = nullptr;
-
-                else{
-                    data = head->data
+            //     if (temp->next != nullptr){
+            //         while(temp->next->next != nullptr)
+            //             temp = temp->next;
+            //         data = temp->next->data;
+            //         delete temp->next;
+            //         temp->next = nullptr;
+            //     }
+                    
+            //     else{
+            //         data = head->data;
+            //         head = nullptr;                    
+            //     }
+            //     nodes--;
+            //     delete temp;
+            //     return data;
+            // }
+            // else
+            //     throw("Lista vacía.");
+            Node<T>* tmp = head;
+            T data; 
+            if (tmp != nullptr ){
+                if (tmp -> next == nullptr){
+                    
+                    data = tmp -> data; 
+                    tmp = nullptr;
+                    delete tmp; 
                     head = nullptr;
-                    delete temp;
+                }
+                else{
+                    while(tmp -> next -> next != nullptr){ 
+                        tmp = tmp -> next;
+                    }
+                    data = tmp -> next -> data;
+                    tmp -> next = nullptr;
+                    delete tmp -> next;
+
                 }
                 nodes--;
                 return data;
             }
-            else
-                throw("Lista vacía.")
+            else{
+                throw("Lista vacía");
+            }
         }
 
         T insert(T data, int pos){ //LISTO
@@ -142,22 +165,23 @@ class ForwardList : public List<T> {
                 delete aux;
             }
             nodes++;
+            return data;
         }
 
         bool remove(int pos){ //FALTA
-            //throw ("sin definir");
+            throw ("sin definir");
 
         }
 
         T& operator[](int pos){ //REVISAR
             //throw ("sin definir");
             Node<T>* temp = head;
-            int data;
+            //T data;
             for (int n = 0; n<pos-1; ++n)
                 temp = temp->next;
-            data = temp->data;
-            delete temp;
-            return data;
+            //data = temp->data;
+            //delete temp;
+            return temp->data;
         }
 
         bool is_empty(){ //LISTO
@@ -177,7 +201,38 @@ class ForwardList : public List<T> {
         }
         
         void sort(){ //FALTA
-            throw ("sin definir");
+            //throw ("sin definir");
+            Node<T> *prev1,*prev2,*tmp2;
+            prev1 = head;
+            bool flag;
+
+            for (Node<T>* tmp1 = head -> next; tmp1 != nullptr; tmp1 = tmp1 -> next){
+                flag = true;
+                tmp2 = head; prev2 = head;
+                while(tmp1 != tmp2){
+                    if ((tmp2 == head) && (tmp1 -> data <= tmp2 -> data)){
+                        push_front(tmp1 -> data);
+                        prev1 -> next = tmp1 -> next;
+                        flag = false;
+                        break;
+                    }
+                    else if (tmp1 -> data <= tmp2 -> data){
+                        prev1 -> next = tmp1 -> next; 
+                        prev2 -> next = tmp1;
+                        tmp1 -> next = tmp2;
+                        flag = false;
+                        break;
+                    }
+                    else {
+                        if (tmp2 != head){prev2 = tmp2;};
+                        tmp2 = tmp2 -> next;
+                    }
+                }
+                if (flag == true){
+                    prev1 = tmp1; 
+                }
+
+            }
         }
 
         bool is_sorted(){ //LISTO

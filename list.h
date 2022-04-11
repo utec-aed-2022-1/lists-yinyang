@@ -12,15 +12,11 @@ class List {
         int nodes;
 
     public:
-<<<<<<< HEAD
         List() : head(nullptr), tail(nullptr), nodes(0) {
             nodes = 0;
             this->head = this->tail = nullptr;
         }
         
-=======
-        List(){};
->>>>>>> 6cda62992bea34d88e9aa1657ef64bc630cd6455
         virtual ~List(){
             // TODO           
         };
@@ -40,11 +36,7 @@ class List {
         virtual T pop_back() = 0;
         virtual T insert(T, int) = 0;
         virtual bool remove(int) = 0;
-<<<<<<< HEAD
         virtual T& operator[](int) = 0; // debe ser declarado en cada clase hija
-=======
-        virtual T& operator[](int) = 0; //debe ser declarado en cada clase hija
->>>>>>> 6cda62992bea34d88e9aa1657ef64bc630cd6455
         virtual bool is_empty() = 0;
         virtual int size(){
             return this->nodes;

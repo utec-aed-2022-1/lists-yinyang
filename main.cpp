@@ -18,13 +18,8 @@ void test(List<int>* list){
     //ASSERT(list->pop_back() == 15, "The function push_back/pop_back is not working");
     list->push_back(30);
     list->push_back(8);
-<<<<<<< HEAD
     list->insert(12, 2);
     // ASSERT((*list)[2] == 12, "The operator [] is not working"); // ojo 
-=======
-    //list->insert(12, 2);
-    //ASSERT((*list)[2] == 12, "The operator [] is not working");
->>>>>>> 6cda62992bea34d88e9aa1657ef64bc630cd6455
     list->push_back(10);
     list->push_front(3);
     //ASSERT(list->is_sorted() == false, "The function is_sorted is not working");

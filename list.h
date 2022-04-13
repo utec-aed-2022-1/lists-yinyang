@@ -22,13 +22,14 @@ class List {
         };
         
         // Contrato
-        virtual T front(){
-            if(!this->is_empty()){
-                return this->head->data;
-            } else{
-                throw ("Lista vacía");
-            }
-        }
+        virtual T front() = 0; 
+        // T front(){
+        //     if(!this->is_empty()){
+        //         return this->head->data;
+        //     } else{
+        //         throw ("Lista vacía");
+        //     }
+        // }
         virtual T back() = 0;
         virtual void push_front(T) = 0;
         virtual void push_back(T) = 0;
@@ -37,10 +38,17 @@ class List {
         virtual T insert(T, int) = 0;
         virtual bool remove(int) = 0;
         virtual T& operator[](int) = 0; // debe ser declarado en cada clase hija
+        
         virtual bool is_empty() = 0;
-        virtual int size(){
-            return this->nodes;
-        }
+        // bool is_empty(){
+        //     return this->head == nullptr;
+        // }
+
+        virtual int size() = 0;
+        // virtual int size(){
+        //     return this->nodes;
+        // }
+
         virtual void clear() = 0;
         virtual void sort() = 0;
         virtual bool is_sorted() = 0;

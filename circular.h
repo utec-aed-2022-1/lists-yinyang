@@ -11,17 +11,24 @@ class CircularList : public List<T> {
         int nodes;
     public:
         CircularList() : List<T>(), nodes(0), head(nullptr) {
-            nodes = 0;
-            head = new Node<T>();
-            head->next = head;
-            head->prev = head;
+            this->nodes = 0;
+            this->head = new Node<T>();
+            this->head->next = head;
+            this->head->prev = head;
         }
 
         ~CircularList(){
-           delete head;
+           this->clear();
+           delete this->head;
         }
 
-        // T front(){} // Herencia
+        T front(){
+            if(!this->is_empty()){
+                return this->head->data;
+            } else{
+                throw ("Lista vacía");
+            }
+        }
 
         T back(){
             if(is_empty())
@@ -31,13 +38,16 @@ class CircularList : public List<T> {
         }
 
         void push_front(T data){
-            Node<T>* nuevo = new Node<T>(data);
-
-            head->next->prev = nuevo;
-            nuevo->next = head->next;
-            nuevo->prev = head;
-            head->next = nuevo;
-
+            Node<T>* node = new Node<T>(data);
+            node->data = data;
+            node->next = this->head->next;
+            node->prev = this->head;
+            if(this->is_empty()){
+                this->head->prev = node;
+            } else{
+                this->head->next->prev = node;
+            }
+            this->head->next = node;
             nodes++;
         }
 
@@ -54,64 +64,62 @@ class CircularList : public List<T> {
         }
 
         T pop_front(){
-            if(is_empty())
-                throw("Lista vacía.");
+            if(!this->is_empty()){
+                T data = this->head->next->data;
+                this->head->next = this->head->next->next;
+                delete this->head->next->prev;
+                this->head->next->prev = this->head;
+                this->nodes--;
+                return data;
+            }
             else{
-                T valor = head->next->data;
-
-                head->next = head->next->next;
-                delete head->next->prev;
-                head->next->prev = head;
-
-                nodes--;
-                return valor;
+                throw("Lista vacía.");
             }
         }
 
         T pop_back(){
-            if(is_empty())
-                throw("Lista vacía.");
-            else{
-                T valor = head->prev->data;
+            if(!this->is_empty()){
+                T data = this->head->prev->data;
 
-                head->prev = head->prev->prev;
-                delete head->prev->next;
-                head->prev->next = head;
+                this->head->prev = this->head->prev->prev;
+                delete this->head->prev->next;
+                this->head->prev->next = head;
 
                 nodes--;
-                return valor;
+                return data;
+            }
+            else{
+                throw("Lista vacía.");
             }
         }
 
         T insert(T data, int pos){
-            Node<T>* temp = head->next;
-            if(is_empty()){
-                push_back(data);
+            Node<T>* temp = this->head->next;
+            if(this->is_empty() && pos == 0){
+                this->push_back(data);
                 return data;
             } else{
-                if(pos+1 <= nodes){
-                    Node<T>* nuevo = new Node<T>(data);
-
-                    while(pos != 0){
+                if(pos+1 <= this->nodes){
+                    Node<T>* node = new Node<T>(data);
+                    while(pos){
                         temp = temp->next;
                         pos--;
                     }
-                    temp->prev->next = nuevo;
-                    nuevo->prev = temp->prev;
-                    nuevo->next = temp;
-                    temp->prev = nuevo;
+                    temp->prev->next = node;
+                    node->prev = temp->prev;
+                    node->next = temp;
+                    temp->prev = node;
+                    this->nodes++;
                 } else{
                     throw("Posición fuera del rango.");
                 }
-                delete temp;
                 return data;             
             }
         }
 
         bool remove(int pos){
-
             if(pos+1 <= nodes){
-                Node<T>* temp = head->next;
+                Node<T>* temp = this->head->next;
                 while(pos == 0){
                     temp = temp->next;
                     pos--;
@@ -132,60 +140,89 @@ class CircularList : public List<T> {
                 tmp = tmp -> next;
             }  
             return tmp -> data;
-        } //debe ser declarado en cada clase hija
+        }
 
         bool is_empty(){
-            return head->next == head;
+            return this->head->next == this->head;
         }
 
-        // int size(){} // Herencia
+        int size(){
+            return this->nodes;
+        }
 
         void clear(){
-            head->next = head;
-            head->prev = head;
+            if(!this->is_empty()){
+                int iter = this->size();
+                for(int i = 0; i < iter; i++){
+                    Node<T>* temp = this->head->next;
+                    this->head->next = temp->next;
+                    delete temp;
+                    this->nodes--;
+                }
+                this->head->prev = this->head;
+            }
         }
 
-        void SortFunct(Node<T>* &_head, Node<T>* &tail, T data){//O(n^2)
-            Node<T>* aux;
-            Node<T>* tmp = _head;
-            if (tmp -> data >= data){
-                aux = tail -> prev;
-                tail -> prev -> next = tail -> next; 
-                tail -> next -> prev = tail -> prev;
-                push_front(data);
-                tail = aux;
+        // // void SortFunct(Node<T>* &_head, Node<T>* &tail, T data){//O(n^2)
+        //     Node<T>* aux;
+        //     Node<T>* tmp = _head;
+        //     if (tmp -> data >= data){
+        //         aux = tail -> prev;
+        //         tail -> prev -> next = tail -> next; 
+        //         tail -> next -> prev = tail -> prev;
+        //         this->push_front(data);
+        //         tail = aux;
                 
-            }
-            else{
-                Node<T>* nodo = new Node<T>(data);
-                while (tmp != tail && tmp -> next -> data < data ){
-                    tmp = tmp -> next;
-                }
-                if (tmp != tail){
-                    // Remover tail de la lista
-                    tail -> prev -> next = tail -> next; 
-                    tail -> next -> prev = tail -> prev;
-                    // Incluir data en valores
-                    tmp -> next -> prev = nodo;
-                    nodo -> next = tmp -> next;
-                    tmp -> next = nodo; 
-                    nodo -> prev = tmp;
-                }
-            } 
-        }
+        //     }
+        //     else{
+        //         Node<T>* nodo = new Node<T>(data);
+        //         while (tmp != tail && tmp -> next -> data < data ){
+        //             tmp = tmp -> next;
+        //         }
+        //         if (tmp != tail){
+        //             // Remover tail de la lista
+        //             tail -> prev -> next = tail -> next; 
+        //             tail -> next -> prev = tail -> prev;
+        //             // Incluir data en valores
+        //             tmp -> next -> prev = nodo;
+        //             nodo -> next = tmp -> next;
+        //             tmp -> next = nodo; 
+        //             nodo -> prev = tmp;
+        //         }
+        //     } 
+        // }
 
         void sort(){
-            if (is_empty()){
-                throw("Lista vacía");
-            }
-            else if(nodes == 1){
-                return;
-            }
-            else {
-                for(Node<T>* temp = head->next->next; temp != head; temp = temp->next){
-                    SortFunct(head->next,temp,temp->data);
+            if(!this->is_empty()){
+                bool isSorted = this->is_sorted();
+                while(!isSorted){
+                    isSorted = true;
+                    Node<T>* temp = this->head->next;      
+                    while(temp != this->head && temp->next != this->head){
+                        if(temp->data > temp->next->data){
+                            T aux = temp->data;
+                            temp->data = temp->next->data;
+                            temp->next->data = aux;
+                            temp = temp->next;
+                            isSorted = false;
+                        }
+                        temp = temp->next;
+                    }
                 }
+            } else{
+                throw ("Lista vacía.");
             }
+            // if (this->is_empty()){
+            //     throw("Lista vacía");
+            // }
+            // else if(this->nodes == 1){
+            //     return;
+            // }
+            // else {
+            //     for(Node<T>* temp = this->head->next->next; temp != this->head; temp = temp->next){
+            //         SortFunct(this->head->next,temp,temp->data);
+            //     }
+            // }
         }
 
         bool is_sorted(){

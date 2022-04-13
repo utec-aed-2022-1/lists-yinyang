@@ -12,23 +12,22 @@ class DoubleList : public List<T> {
         int nodes;
 
     public:
-        DoubleList() : List<T>(), nodes(0), head(nullptr), tail(nullptr){
-            nodes = 0;
-            this->head = this->tail = nullptr;
-        }
+        // DoubleList() : List<T>(), nodes(0), head(nullptr), tail(nullptr){
+        //     nodes = 0;
+        //     this->head = this->tail = nullptr;
+        // }
 
         ~DoubleList(){ 
-         	if(!this->is_empty()){
-                Node<T>* temp = this->head;
-                while(temp != nullptr){
-                    temp = this->head->next;
-                    delete head;
-                    this->head = temp;
-                }
-            }            
+         	this->clear();         
         }
 
-        // T front(){} // Herencia
+        T front(){
+            if(!this->is_empty()){
+                return this->head->data;
+            } else{
+                throw ("Lista vacía");
+            }
+        }
 
         T back(){
             if(!this->is_empty()){
@@ -38,23 +37,29 @@ class DoubleList : public List<T> {
             }    
         }
 
-        void push_front(T data){ // *
+        void push_front(T data){
             Node<T>* node = new Node<T>(data);
             node->data = data;
-            Node<T>* temp = node;
             node->next = this->head;
-            this->head->prev = node;
+            if(!this->is_empty()){
+                this->head->prev = node;
+            } else{
+                this->tail = node;
+            }
             this->head = node;
             nodes++;
         }
         
-        void push_back(T data){ // *
+        void push_back(T data){
             Node<T>* node = new Node<T>(data);
             node->data = data;
-            Node<T>* temp = node;
-            node->prev = tail;
-            tail->next = node;
-            tail = node;
+            node->prev = this->tail;
+            if(!this->is_empty()){
+                this->tail->next = node;
+            } else{
+                this->head = node;
+            }
+            this->tail = node;
             nodes++;
         }           
         
@@ -62,6 +67,7 @@ class DoubleList : public List<T> {
             if (!this->is_empty()){
                 Node<T>* temp = this->head;
                 this->head = this->head->next;
+                this->head->prev = nullptr;
                 nodes--;
                 T data = temp->data;
                 delete temp;
@@ -76,6 +82,7 @@ class DoubleList : public List<T> {
             if (!this->is_empty()){
                 Node<T>* temp = this->tail;
                 this->tail = this->tail->prev;
+                this->tail->next = nullptr;
                 nodes--;
                 T data = temp->data;
                 delete temp;
@@ -94,10 +101,10 @@ class DoubleList : public List<T> {
                 }
                 Node<T>* node = new Node<T>(data);
                 node->data = data;
-                node->next = temp->next->next;
+                node->next = temp->next;
+                node->prev = temp;
                 temp->next = node;
-                node->prev = temp->next;
-                temp->next->next->prev = node;
+                node->next->prev = node;
                 nodes++;
                 return data;
             } else{
@@ -139,7 +146,7 @@ class DoubleList : public List<T> {
         T& operator[](int pos){
             if(!this->is_empty() && pos < this->size()){
                 Node<T>* temp = this->head;
-                for(int i = 0; i < pos - 1; i++){
+                for(int i = 0; i < pos; i++){
                     temp = temp->next;
                 }
                 return temp->data;
@@ -149,33 +156,40 @@ class DoubleList : public List<T> {
         }
 
         bool is_empty(){
-            return this->head == nullptr;
+            return this->head == nullptr && this->tail == nullptr;
         }
 
-        // int size(){} // Herencia
+        int size(){
+            return this->nodes;
+        }
 
-        void clear(){ // *
-            if(!this->is_empty()){                
-                for(int i = 0; i < this->nodes - 1; i++){
-                    Node<T>* temp = this->tail;
+        void clear(){
+            if(!this->is_empty()){
+                int iter = this->size();
+                for(int i = 0; i < iter; i++){
+                    Node<T>* temp = this->head;
+                    this->head = this->head->next;
                     delete temp;
-                    nodes--;
+                    this->nodes--;
                 }
-            } else{
-                throw ("Lista vacía");
+                this->tail = nullptr;
             }
         }
 
-        void sort(){ //
-            if(!this->is_empty() /* && this->is_sorted() = false && this->nodes == 1 */){
-                Node<T>* temp = this->head;        
-                for(int i = 0; i < this->size() - 1; i++){
-                    if(temp->data < temp->next->data){
-                        temp = temp->next;
-                    } else{
-                        T aux = temp->data;
-                        temp->data = temp->next->data;
-                        temp->next->data = aux;
+        void sort(){
+            if(!this->is_empty()){
+                bool isSorted = this->is_sorted();
+                while(!isSorted){
+                    isSorted = true;
+                    Node<T>* temp = this->head;      
+                    while(temp != nullptr && temp->next != nullptr){
+                        if(temp->data > temp->next->data){
+                            T aux = temp->data;
+                            temp->data = temp->next->data;
+                            temp->next->data = aux;
+                            temp = temp->next;
+                            isSorted = false;
+                        }
                         temp = temp->next;
                     }
                 }
@@ -184,7 +198,7 @@ class DoubleList : public List<T> {
             }
         }
 
-        bool is_sorted(){ // LISTO
+        bool is_sorted(){
             if(!this->is_empty()){
                 T prev = head->data;
                 for(Node<T>* temp = head->next; temp!=nullptr; temp=temp->next){

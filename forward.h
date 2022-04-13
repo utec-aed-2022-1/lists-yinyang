@@ -11,25 +11,24 @@ class ForwardList : public List<T> {
         int nodes;
 
     public:
-        ForwardList() : List<T>(), nodes(0), head(nullptr){ // *
-            nodes = 0;
-            this->head = nullptr;
+        // ForwardList(){ // *
+        //     nodes = 0;
+        //     this->head = nullptr;
+        // }
+
+        ~ForwardList(){
+            this->clear();	            
         }
 
-        ~ForwardList(){ // *
+        T front(){
             if(!this->is_empty()){
-                Node<T>* temp = this->head;
-                while(temp != nullptr){
-                    temp = this->head->next;
-                    delete head;
-                    this->head = temp;
-                }
-            } 	            
+                return this->head->data;
+            } else{
+                throw ("Lista vacía");
+            }
         }
 
-        // T front(){} // Herencia
-
-        T back(){ // *            
+        T back(){           
             if(!this->is_empty()){
                 Node<T>* temp = this->head;
                 for(int i = 0; i < this->nodes - 1; i++){
@@ -41,35 +40,33 @@ class ForwardList : public List<T> {
             } 
         }
 
-        void push_front(T data){ // *
+        void push_front(T data){
             Node<T>* node = new Node<T>(data);
             node->data = data;
-            Node<T>* temp = node;
-            node->next = head;
-            head = node;
+            node->next = this->head;
+            this->head = node;
             nodes++;
         }
 
-        void push_back(T data){ // *
+        void push_back(T data){
             if(!this->is_empty()){
                 Node<T>* temp = this->head;
-                for(int i = 0; i < this->nodes - 1; i++){
+                for(int i = 0; i < this->size()-1; i++){
                     temp = temp->next;
                 }
                 Node<T>* node = new Node<T>(data);
                 temp->next = node;                
                 nodes++;
-                // return node->data;
             } else{
                 throw ("Lista vacía");
             }
         }
 
-        T pop_front(){ // *
+        T pop_front(){
             if (!this->is_empty()){
                 Node<T>* temp = this->head;
                 this->head = this->head->next;
-                nodes--;
+                this->nodes--;
                 T data = temp->data;
                 delete temp;
                 return data;
@@ -79,7 +76,7 @@ class ForwardList : public List<T> {
             }         
         }
 
-        T pop_back(){ // *
+        T pop_back(){
             if(!this->is_empty()){
                 Node<T>* temp = this->head;
                 for(int i = 0; i < this->nodes - 1; i++){
@@ -87,7 +84,7 @@ class ForwardList : public List<T> {
                 }
                 T data = temp->data;
                 delete temp;
-                nodes--;
+                this->nodes--;
                 return data;
             } else{
                 throw ("Lista vacía");
@@ -101,7 +98,7 @@ class ForwardList : public List<T> {
                     temp = temp->next;
                 }
                 Node<T>* node = new Node<T>(data);
-                node->next = temp->next->next;
+                node->next = temp->next;
                 temp->next = node;          
                 nodes++;
                 return data;
@@ -110,7 +107,7 @@ class ForwardList : public List<T> {
             }
         }
 
-        bool remove(int pos){ // *
+        bool remove(int pos){
             if(!this->is_empty() && pos < this->nodes){
                 Node<T>* temp = this->head;
                 for(int i = 0; i < pos - 1; i++){
@@ -129,7 +126,7 @@ class ForwardList : public List<T> {
         T& operator[](int pos){
             if(!this->is_empty() && pos < this->size()){
                 Node<T>* temp = this->head;
-                for(int i = 0; i < pos - 1; i++){
+                for(int i = 0; i < pos; i++){
                     temp = temp->next;
                 }
                 return temp->data;
@@ -142,73 +139,45 @@ class ForwardList : public List<T> {
             return this->head == nullptr;
         }
 
-        // int size(){} // Herencia
+        int size(){
+            return this->nodes;
+        }
 
-        void clear(){ // *            
+        void clear(){          
             if(!this->is_empty()){
-                for(int i = 0; i < this->nodes - 1; i++){
+                int iter = this->size();
+                for(int i = 0; i < iter; i++){
                     Node<T>* temp = this->head;
                     this->head = this->head->next;
                     delete temp;
-                    nodes--;
+                    this->nodes--;
                 }
-            } else{
-                throw ("Lista vacía");
             }
         }
         
-        void sort(){ //
-            if(!this->is_empty() /* && this->is_sorted() = false && this->nodes == 1*/){
-                Node<T>* temp = this->head;        
-                for(int i = 0; i < this->size() - 1; i++){
-                    if(temp->data < temp->next->data){
-                        temp = temp->next;
-                    } else{
-                        T aux = temp->data;
-                        temp->data = temp->next->data;
-                        temp->next->data = aux;
+        void sort(){
+            if(!this->is_empty()){
+                bool isSorted = this->is_sorted();
+                while(!isSorted){
+                    isSorted = true;
+                    Node<T>* temp = this->head;      
+                    while(temp != nullptr && temp->next != nullptr){
+                        if(temp->data > temp->next->data){
+                            T aux = temp->data;
+                            temp->data = temp->next->data;
+                            temp->next->data = aux;
+                            temp = temp->next;
+                            isSorted = false;
+                        }
                         temp = temp->next;
                     }
                 }
             } else{
                 throw ("Lista vacía.");
             }
-
-
-            // Node<T> *prev1,*prev2,*tmp2;
-            // prev1 = head;
-            // bool flag;
-
-            // for (Node<T>* tmp1 = head -> next; tmp1 != nullptr; tmp1 = tmp1 -> next){
-            //     flag = true;
-            //     tmp2 = head; prev2 = head;
-            //     while(tmp1 != tmp2){
-            //         if ((tmp2 == head) && (tmp1 -> data <= tmp2 -> data)){
-            //             push_front(tmp1 -> data);
-            //             prev1 -> next = tmp1 -> next;
-            //             flag = false;
-            //             break;
-            //         }
-            //         else if (tmp1 -> data <= tmp2 -> data){
-            //             prev1 -> next = tmp1 -> next; 
-            //             prev2 -> next = tmp1;
-            //             tmp1 -> next = tmp2;
-            //             flag = false;
-            //             break;
-            //         }
-            //         else {
-            //             if (tmp2 != head){prev2 = tmp2;};
-            //             tmp2 = tmp2 -> next;
-            //         }
-            //     }
-            //     if (flag == true){
-            //         prev1 = tmp1; 
-            //     }
-
-            // }
         }
 
-        bool is_sorted(){ // LISTO
+        bool is_sorted(){
             if(head != nullptr){
                 T prev = head->data;
                 for(Node<T>* temp = head->next; temp!=nullptr; temp=temp->next){
@@ -222,7 +191,7 @@ class ForwardList : public List<T> {
                 throw("Lista vacía.");
         }
 
-        void reverse(){ // REVISAR
+        void reverse(){
             Node<T>* temp = this->head;
             T dato;
             for (int n = 0; n < nodes; ++n){

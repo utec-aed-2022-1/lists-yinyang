@@ -11,70 +11,193 @@ class ForwardList : public List<T> {
         int nodes;
 
     public:
-        ForwardList() : List<T>() {}
+        // ForwardList(){ // *
+        //     nodes = 0;
+        //     this->head = nullptr;
+        // }
 
-        ~ForwardList(){ 
-         	// TODO            
+        ~ForwardList(){
+            this->clear();	            
         }
 
         T front(){
-            throw ("sin definir");
+            if(!this->is_empty()){
+                return this->head->data;
+            } else{
+                throw ("Lista vacía");
+            }
         }
 
-        T back(){
-            throw ("sin definir");
+        T back(){           
+            if(!this->is_empty()){
+                Node<T>* temp = this->head;
+                for(int i = 0; i < this->nodes - 1; i++){
+                    temp = temp->next;
+                }
+                return temp->data;
+            } else{
+                throw ("Lista vacía");
+            } 
         }
 
         void push_front(T data){
-            throw ("sin definir");
+            Node<T>* node = new Node<T>(data);
+            node->data = data;
+            node->next = this->head;
+            this->head = node;
+            nodes++;
         }
 
         void push_back(T data){
-            throw ("sin definir");
+            if(!this->is_empty()){
+                Node<T>* temp = this->head;
+                for(int i = 0; i < this->size()-1; i++){
+                    temp = temp->next;
+                }
+                Node<T>* node = new Node<T>(data);
+                temp->next = node;                
+                nodes++;
+            } else{
+                throw ("Lista vacía");
+            }
         }
 
         T pop_front(){
-            throw ("sin definir");
+            if (!this->is_empty()){
+                Node<T>* temp = this->head;
+                this->head = this->head->next;
+                this->nodes--;
+                T data = temp->data;
+                delete temp;
+                return data;
+            }
+            else {
+                throw ("Lista vacía.");
+            }         
         }
 
         T pop_back(){
-            throw ("sin definir");
+            if(!this->is_empty()){
+                Node<T>* temp = this->head;
+                for(int i = 0; i < this->nodes - 1; i++){
+                    temp = temp->next;
+                }
+                T data = temp->data;
+                delete temp;
+                this->nodes--;
+                return data;
+            } else{
+                throw ("Lista vacía");
+            }
         }
 
         T insert(T data, int pos){
-            throw ("sin definir");
+            if(!this->is_empty() && pos < this->nodes){
+                Node<T>* temp = this->head;
+                for(int i = 0; i < pos - 1; i++){
+                    temp = temp->next;
+                }
+                Node<T>* node = new Node<T>(data);
+                node->next = temp->next;
+                temp->next = node;          
+                nodes++;
+                return data;
+            } else{
+                throw ("Lista vacía");
+            }
         }
 
         bool remove(int pos){
-            throw ("sin definir");
-        }
-
+            if(!this->is_empty() && pos < this->nodes){
+                Node<T>* temp = this->head;
+                for(int i = 0; i < pos - 1; i++){
+                    temp = temp->next;
+                }
+                Node<T>* node = temp->next;
+                temp->next = temp->next->next;
+                delete node;
+                nodes--;
+                return true;
+            } else{
+                throw ("Lista vacía");
+            }
+        }        
+                
         T& operator[](int pos){
-            throw ("sin definir");
+            if(!this->is_empty() && pos < this->size()){
+                Node<T>* temp = this->head;
+                for(int i = 0; i < pos; i++){
+                    temp = temp->next;
+                }
+                return temp->data;
+            } else{
+                throw ("Lista vacía.");
+            }
         }
 
         bool is_empty(){
-            throw ("sin definir");
+            return this->head == nullptr;
         }
 
         int size(){
-            throw ("sin definir");
+            return this->nodes;
         }
 
-        void clear(){
-            throw ("sin definir");
+        void clear(){          
+            if(!this->is_empty()){
+                int iter = this->size();
+                for(int i = 0; i < iter; i++){
+                    Node<T>* temp = this->head;
+                    this->head = this->head->next;
+                    delete temp;
+                    this->nodes--;
+                }
+            }
         }
         
         void sort(){
-            throw ("sin definir");
+            if(!this->is_empty()){
+                bool isSorted = this->is_sorted();
+                while(!isSorted){
+                    isSorted = true;
+                    Node<T>* temp = this->head;      
+                    while(temp != nullptr && temp->next != nullptr){
+                        if(temp->data > temp->next->data){
+                            T aux = temp->data;
+                            temp->data = temp->next->data;
+                            temp->next->data = aux;
+                            temp = temp->next;
+                            isSorted = false;
+                        }
+                        temp = temp->next;
+                    }
+                }
+            } else{
+                throw ("Lista vacía.");
+            }
         }
 
         bool is_sorted(){
-            throw ("sin definir");
+            if(head != nullptr){
+                T prev = head->data;
+                for(Node<T>* temp = head->next; temp!=nullptr; temp=temp->next){
+                    if(temp->data < prev)
+                        return false;
+                    prev = temp->data;
+                }
+                return true;
+            }
+            else
+                throw("Lista vacía.");
         }
 
         void reverse(){
-            throw ("sin definir");
+            Node<T>* temp = this->head;
+            T dato;
+            for (int n = 0; n < nodes; ++n){
+                dato = pop_back();
+                insert(dato, n);
+            }
         }
 
         std::string name(){
